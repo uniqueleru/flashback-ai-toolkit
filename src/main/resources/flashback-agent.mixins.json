@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "dev.flashbackagent.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": ["ExportJobAccessor", "ExportCancellationMixin", "RecordingPlayerInfoMixin", "BackgroundMinecraftMixin", "BackgroundFramerateMixin"],
+  "injectors": { "defaultRequire": 1 }
+}

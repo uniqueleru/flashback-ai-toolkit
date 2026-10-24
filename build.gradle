@@ -1,0 +1,79 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.17.16'
+}
+
+version = '0.4.0'
+group = 'dev.flashbackagent'
+
+repositories {
+    maven { url = 'https://api.modrinth.com/maven' }
+    mavenCentral()
+}
+
+// The Minecraft target and its mod versions come from gradle.properties.
+def target = [minecraft: project.minecraft_version, java: project.java_version,
+              loader: project.loader_version, flashback: project.flashback_version]
+
+// Fabric's development classpath needs nested libraries explicitly. These stay
+// external dependencies; Flashback and its libraries are never bundled in our JAR.
+configurations { flashbackDevelopment }
+dependencies { flashbackDevelopment "maven.modrinth:flashback:${project.flashback_modrinth}" }
+def nestedDir = layout.buildDirectory.dir('flashback-libraries').get().asFile
+def extractFlashbackLibraries = tasks.register('extractFlashbackLibraries', Sync) {
+    from { zipTree(configurations.flashbackDevelopment.singleFile) }
+    include 'META-INF/jars/*.jar'
+    eachFile { path = name }
+    includeEmptyDirs = false
+    into nestedDir
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    compileOnly "maven.modrinth:flashback:${project.flashback_modrinth}"
+    compileOnly "maven.modrinth:carpet:${project.carpet_modrinth}"
+    runtimeOnly "maven.modrinth:flashback:${project.flashback_modrinth}"
+    // Whatever libraries this Flashback build nests, listed once extracted.
+    runtimeOnly files({ nestedDir.listFiles({ file -> file.name.endsWith('.jar') } as FileFilter) ?: [] })
+        .builtBy(extractFlashbackLibraries)
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(target.java as int)
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach { options.release = target.java as int }
+test { useJUnitPlatform() }
+processResources {
+    inputs.properties([version: project.version] + target)
+    filesMatching('fabric.mod.json') { expand([version: project.version] + target) }
+}
+
+// The server companion has no Flashback/client dependency. Install it alongside
+// Carpet in either a local client (integrated server) or a dedicated server.
+tasks.register('carpetJar', Jar) {
+    dependsOn classes
+    archiveBaseName = 'carpet-agent'
+    inputs.properties([version: project.version] + target)
+    from(sourceSets.main.output) {
+        include 'dev/flashbackagent/Carpet*.class'
+        include 'dev/flashbackagent/ToolInbox*.class'
+        include 'dev/flashbackagent/ToolArgs*.class'
+        include 'dev/flashbackagent/JobFiles.class'
+        include 'dev/flashbackagent/Versions.class'
+    }
+    from('src/carpet/resources') { expand([version: project.version] + target) }
+}
+assemble.dependsOn carpetJar
+
+tasks.register('backgroundJar', Jar) {
+    dependsOn classes
+    archiveBaseName = 'flashback-background'
+    from(sourceSets.main.output) { include 'dev/flashbackagent/background/**' }
+    manifest { attributes 'Premain-Class': 'dev.flashbackagent.background.BackgroundAgent' }
+}
+assemble.dependsOn backgroundJar

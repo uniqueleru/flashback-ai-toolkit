@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "carpet_agent",
+  "version": "${version}",
+  "name": "Carpet Agent Tools",
+  "description": "Local structured bot tools for Carpet; integrated and dedicated servers.",
+  "authors": ["Leru"],
+  "contact": {"sources": "https://github.com/uniqueleru/flashback-ai-toolkit", "issues": "https://github.com/uniqueleru/flashback-ai-toolkit/issues"},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {"main": ["dev.flashbackagent.CarpetAgent"]},
+  "depends": {
+    "fabricloader": ">=${loader}", "minecraft": "${minecraft}", "java": ">=${java}",
+    "fabric-api": "*", "carpet": "*"
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flashback Clips"
+  short_description: "Direct Carpet scenes, record replays, and author clips"
+  default_prompt: "Use $flashback-clips to create the Flashback footage I describe, choosing camera and editing tools to fit my request."

@@ -1,0 +1,16 @@
+/.gradle/
+/build/
+/dist/
+/run/
+/work/
+/outputs/
+/runtime/
+/flashback_agent/bin/
+__pycache__/
+*.egg-info/
+.venv/
+.env
+.env.*
+!.env.example
+*.py[cod]
+.pytest_cache/

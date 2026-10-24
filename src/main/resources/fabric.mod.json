@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "flashback_agent",
+  "version": "${version}",
+  "name": "Flashback Agent",
+  "description": "Local agent tools for replay inspection, explicit camera plans and MP4 exports.",
+  "authors": ["Leru"],
+  "contact": {
+    "sources": "https://github.com/uniqueleru/flashback-ai-toolkit",
+    "issues": "https://github.com/uniqueleru/flashback-ai-toolkit/issues"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": { "client": ["dev.flashbackagent.FlashbackAgent"] },
+  "mixins": ["flashback-agent.mixins.json"],
+  "depends": {
+    "fabricloader": ">=${loader}",
+    "minecraft": "${minecraft}",
+    "java": ">=${java}",
+    "fabric-api": "*",
+    "flashback": "${flashback}"
+  }
+}

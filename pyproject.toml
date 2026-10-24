@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flashback-ai-toolkit"
+version = "0.4.0"
+description = "Agent tools for inspecting, planning and rendering Minecraft Flashback clips"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Leru"}]
+requires-python = ">=3.11"
+dependencies = []
+keywords = ["minecraft", "flashback", "replay", "video", "agent", "codex", "claude-code"]
+classifiers = [
+    "Environment :: Console",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Video",
+]
+
+[project.urls]
+Homepage = "https://github.com/uniqueleru/flashback-ai-toolkit"
+Issues = "https://github.com/uniqueleru/flashback-ai-toolkit/issues"
+
+[project.scripts]
+flashback-clips = "flashback_agent.cli:main"
+mc-broll = "flashback_agent.cli:main"
+
+[tool.setuptools]
+packages = ["flashback_agent", "flashback_agent.skill", "flashback_agent.skill.agents", "flashback_agent.skill.references"]
+
+# The agent skill lives in .agents/ for repository use and ships inside the wheel for `setup`.
+[tool.setuptools.package-dir]
+"flashback_agent.skill" = ".agents/skills/flashback-clips"
+
+[tool.setuptools.package-data]
+# The version-independent guard, plus one folder of bridges and bridge.json per Minecraft version.
+flashback_agent = ["bin/*.jar", "bin/*/*.jar", "bin/*/bridge.json"]
+"flashback_agent.skill" = ["*.md"]
+"flashback_agent.skill.agents" = ["*.yaml"]
+"flashback_agent.skill.references" = ["*.md"]
