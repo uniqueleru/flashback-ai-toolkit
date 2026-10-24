@@ -11,7 +11,7 @@ class EditTest(unittest.TestCase):
     def test_edit_resolves_relative_inputs_and_preserves_caller_shot_order(self):
         from flashback_agent.sequence import load_edit
         with tempfile.TemporaryDirectory() as directory, fixtures.fake_bridges(Path(directory)):
-            root = Path(directory)
+            root = Path(directory).resolve()  # CI temp folders can be 8.3 short names; edits resolve paths
             with zipfile.ZipFile(root/'world.zip', 'w') as archive:
                 archive.writestr('metadata.json', json.dumps({'version_string': fixtures.MINECRAFT, 'total_ticks': 200}))
             (root/'camera.json').write_text(json.dumps({'version':1,'camera':[{'tick':0,'position':[0,80,0],'yaw':0,'pitch':20}]}))
